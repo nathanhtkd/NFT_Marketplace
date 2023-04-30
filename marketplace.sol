@@ -12,7 +12,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 contract Marketplace is ReentrancyGuard {
 
-    address payable public owner;  
+    address public owner;  
     
     struct NFT {
     address nftAddress;
@@ -26,6 +26,11 @@ contract Marketplace is ReentrancyGuard {
     mapping(uint256 => bool) public isListed;
     mapping(address => uint256) private sellerProceeds;
     uint256 public transactionFee;
+
+    constructor() {
+        owner = msg.sender;
+        transactionFee = 100;
+    }
 
     function listItem(address nftAddress, uint256 tokenID, uint256 price) public payable nonReentrant {
         require(price > 0, 'Price needs to be greater than 0');
