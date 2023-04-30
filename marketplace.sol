@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 /*
-    How does an nft contract interact with the marketplace?
+    How does an nft contract interact with the marketplace? TEST
 */
 
 // NFT standard is ERC721
