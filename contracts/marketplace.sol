@@ -7,6 +7,7 @@ pragma solidity ^0.8.0;
 
 // NFT standard is ERC721
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+
 // reentrant guard 
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
@@ -48,7 +49,7 @@ contract Marketplace is ReentrancyGuard {
 
         // transfers ownership from original owner of NFT to marketplace address
         IERC721(nftAddress).transferFrom(msg.sender, address(this), tokenID);
-
+        
         nftListings[tokenID] = NFT(nftAddress, tokenID, msg.sender, price); 
         isListed[tokenID] = true;
     }

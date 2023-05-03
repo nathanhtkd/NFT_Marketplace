@@ -1,6 +1,7 @@
 /artifacts/
 /.deps/
 /node_modules/
-yarn.lock
+/cache/
 package.json
+package-lock.json
 hardhat.config.js
