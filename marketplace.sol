@@ -48,13 +48,13 @@ contract Marketplace is ReentrancyGuard {
 
         // transfers ownership from original owner of NFT to marketplace address
         IERC721(nftAddress).transferFrom(msg.sender, address(this), tokenID);
-        
+
         nftListings[tokenID] = NFT(nftAddress, tokenID, msg.sender, price); 
         isListed[tokenID] = true;
     }
 
     function unlistItem(address nftAddress, uint256 tokenID) public {
-        if(isListed[tokenId] != true) {
+        if(isListed[tokenID] != true) {
             revert ItemIsNotListed();
         }
         if(nftListings[tokenID].owner != msg.sender) {
@@ -65,7 +65,7 @@ contract Marketplace is ReentrancyGuard {
     }
 
     function buyNft(address nftAddress, uint256 tokenID) public payable nonReentrant {
-        if(isListed[tokenId] != true) {
+        if(isListed[tokenID] != true) {
                 revert ItemIsNotListed();
         }
 
