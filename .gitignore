@@ -1,2 +1,6 @@
 /artifacts/
 /.deps/
+/node_modules/
+yarn.lock
+package.json
+hardhat.config.js
