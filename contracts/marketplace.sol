@@ -17,12 +17,12 @@ error ValueNotThePrice(uint256 price);
     2. unlistItem
     3. buyNFT
     4. withdrawProceeds
+    5. updateListing
 
-    NEED TO IMPLEMENT
+    NEED TO IMPLEMENT?
     1. getListedNFT
-    2. updateListing
-    3. getListing
-
+    2. getListing
+    3. auction??
 
 */
 contract Marketplace is ReentrancyGuard {
@@ -35,6 +35,8 @@ contract Marketplace is ReentrancyGuard {
     uint256 public constant LISTING_FEE = 1 wei;
 
     event ItemListed(address indexed seller, address indexed nftAddress, uint256 tokenID, uint256 price);
+    event ItemCanceled(address indexed seller, address indexed nftAddress, uint256 indexed tokenID);
+    event ItemBought(address indexed buyer, address indexed nftAddress, uint256 price);
 
     struct NFT {
         address nftAddress;
@@ -73,7 +75,9 @@ contract Marketplace is ReentrancyGuard {
             revert NotTheOwnerOfThisNFT();
         }
         IERC721(nftAddress).transferFrom(address(this), msg.sender, tokenID);
+        delete(nftListings[tokenID]);
         isListed[tokenID] = false;
+        emit ItemCanceled(msg.sender, nftAddress, tokenID);
     }
 
     function updateListing(address nftAddress, uint256 tokenID, uint256 newPrice) public {
@@ -106,6 +110,8 @@ contract Marketplace is ReentrancyGuard {
         IERC721(nftAddress).transferFrom(address(this), msg.sender, nft.tokenID);
         nft.owner = msg.sender;
         isListed[tokenID] = false;
+
+        emit ItemBought(msg.sender, nftAddress, nft.price);
     }
 
     function withdrawProceeds() public {
