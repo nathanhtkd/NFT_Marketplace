@@ -21,6 +21,13 @@ contract Marketplace is ReentrancyGuard {
 
     address payable public owner;  
     
+    // Mapping of NFT token ID to its current owner
+    mapping(uint256 => NFT) public nftListings;
+    mapping(uint256 => bool) public isListed;
+    mapping(address => uint256) private sellerProceeds;
+    uint256 public constant transactionFee = 100 wei;
+    uint256 public constant LISTING_FEE = 1 wei;
+
     struct NFT {
     address nftAddress;
     uint256 tokenID;
@@ -28,15 +35,8 @@ contract Marketplace is ReentrancyGuard {
     uint256 price;
     }
     
-    // Mapping of NFT token ID to its current owner
-    mapping(uint256 => NFT) public nftListings;
-    mapping(uint256 => bool) public isListed;
-    mapping(address => uint256) private sellerProceeds;
-    uint256 public transactionFee;
-
     constructor() {
         owner = payable(msg.sender);
-        transactionFee = 100;
     }
 
     function listItem(address nftAddress, uint256 tokenID, uint256 price) public payable nonReentrant {
@@ -49,6 +49,7 @@ contract Marketplace is ReentrancyGuard {
 
         // transfers ownership from original owner of NFT to marketplace address
         IERC721(nftAddress).transferFrom(msg.sender, address(this), tokenID);
+        owner.transfer(LISTING_FEE);
         
         nftListings[tokenID] = NFT(nftAddress, tokenID, msg.sender, price); 
         isListed[tokenID] = true;
