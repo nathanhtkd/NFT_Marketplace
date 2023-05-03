@@ -10,9 +10,15 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 // reentrant guard 
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
+error PriceMustBeGreaterThanZero();
+error TransactionFeeNotIncluded();
+error ItemIsNotListed();
+error NotTheOwnerOfThisNFT();
+error ValueNotThePrice(uint256 price);
+
 contract Marketplace is ReentrancyGuard {
 
-    address public owner;  
+    address payable public owner;  
     
     struct NFT {
     address nftAddress;
@@ -28,29 +34,46 @@ contract Marketplace is ReentrancyGuard {
     uint256 public transactionFee;
 
     constructor() {
-        owner = msg.sender;
+        owner = payable(msg.sender);
         transactionFee = 100;
     }
 
     function listItem(address nftAddress, uint256 tokenID, uint256 price) public payable nonReentrant {
-        require(price > 0, 'Price needs to be greater than 0');
-        require(msg.value == transactionFee, 'Please include the transaction fee');
+        if(price < 0) {
+            revert PriceMustBeGreaterThanZero();
+        }
+        if(msg.value != transactionFee) {
+            revert TransactionFeeNotIncluded();
+        }
+
+        // transfers ownership from original owner of NFT to marketplace address
         IERC721(nftAddress).transferFrom(msg.sender, address(this), tokenID);
+        
         nftListings[tokenID] = NFT(nftAddress, tokenID, msg.sender, price); 
         isListed[tokenID] = true;
     }
 
     function unlistItem(address nftAddress, uint256 tokenID) public {
-        require(isListed[tokenID] == true, 'Not listed');
-        require(nftListings[tokenID].owner == msg.sender, 'Not your nft');
+        if(isListed[tokenId] != true) {
+            revert ItemIsNotListed();
+        }
+        if(nftListings[tokenID].owner != msg.sender) {
+            revert NotTheOwnerOfThisNFT();
+        }
         IERC721(nftAddress).transferFrom(address(this), msg.sender, tokenID);
         isListed[tokenID] = false;
     }
 
     function buyNft(address nftAddress, uint256 tokenID) public payable nonReentrant {
-        require(isListed[tokenID] == true, 'Not listed');
+        if(isListed[tokenId] != true) {
+                revert ItemIsNotListed();
+        }
+
         NFT storage nft = nftListings[tokenID];
-        require(msg.value == nft.price, "Not enough money");
+        if(msg.value != nft.price) {
+            revert ValueNotThePrice(nft.price);
+        }
+
         sellerProceeds[nft.owner] += msg.value;
         IERC721(nftAddress).transferFrom(address(this), msg.sender, nft.tokenID);
         nft.owner = msg.sender;
