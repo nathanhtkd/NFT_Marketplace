@@ -68,10 +68,9 @@ contract Marketplace is ReentrancyGuard {
         if(nftListings[tokenID].owner != msg.sender) {
             revert NotTheOwnerOfThisNFT();
         }
-        IERC721(nftAddress).transferFrom(address(this), msg.sender, tokenID);
+        // IERC721(nftAddress).transferFrom(address(this), msg.sender, tokenID);
         delete(nftListings[tokenID]);
         isListed[tokenID] = false;
-        nftCount = nftCount - 1;
 
         emit ItemCanceled(msg.sender, nftAddress, tokenID);
     }
