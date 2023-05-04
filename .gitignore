@@ -5,3 +5,7 @@
 package.json
 package-lock.json
 hardhat.config.js
+/test/
+/utils/
+/deploy/
+/deployments/
