@@ -1,6 +1,6 @@
 const { ethers } = require("hardhat");
 
-const TOKEN_ID = 1;
+const TOKEN_ID = 0;
 
 async function buyItem() {
     const accounts = await ethers.getSigners();

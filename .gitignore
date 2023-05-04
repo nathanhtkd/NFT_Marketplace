@@ -9,3 +9,5 @@ hardhat.config.js
 /utils/
 /deploy/
 /deployments/
+helper-hardhat-config.js
+yarn.lock

@@ -2,7 +2,7 @@ const { ethers } = require("hardhat");
 
 
 async function main () {
-    console.log("\nGetting listed NFTs\n");
+    console.log("\x1b[31m\nGetting listed NFTs\n");
     const nftMarketplaceContract = await ethers.getContract("Marketplace");
     const nftArray = await nftMarketplaceContract.getListedNfts();
     for (let i = 0; i < nftArray.length; ++i) {
@@ -10,10 +10,10 @@ async function main () {
         if(nftAddress === ethers.constants.AddressZero){
             continue;
         } else {
-            console.log(`NFT Address: ${nftAddress}`);
-            console.log(`Token ID: ${tokenID}`);
-            console.log(`Owner: ${owner}`);
-            console.log(`Price: ${ethers.utils.formatEther(price)}`);
+            console.log(`\x1b[36mNFT Address: ${nftAddress}`);
+            console.log(`\x1b[32mToken ID: ${tokenID}`);
+            console.log(`\x1b[35mOwner: ${owner}`);
+            console.log(`\x1b[33mPrice: ${ethers.utils.formatEther(price)}`);
             console.log("----------------------");
         }
     }
