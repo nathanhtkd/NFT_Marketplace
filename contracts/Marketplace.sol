@@ -97,16 +97,15 @@ contract Marketplace is ReentrancyGuard {
             revert ItemIsNotListed();
         }
 
-        NFT storage nft = nftListings[tokenID];
+        NFT memory nft = nftListings[tokenID];
         if(msg.value != nft.price) {
             revert ValueNotThePrice(nft.price);
         }
 
         sellerProceeds[nft.owner] += msg.value;
-        IERC721(nftAddress).transferFrom(address(this), msg.sender, nft.tokenID);
-        nft.owner = msg.sender;
-        isListed[tokenID] = false;
-        nftCount = nftCount - 1;
+        delete(nftListings[tokenID]);
+        isListed[tokenID] = false; 
+        IERC721(nftAddress).safeTransferFrom(nft.owner, msg.sender, tokenID);
 
         emit ItemBought(msg.sender, nftAddress, nft.price);
     }
@@ -124,14 +123,19 @@ contract Marketplace is ReentrancyGuard {
 
      function getListedNfts() public view returns (NFT[] memory) {
         NFT[] memory nfts = new NFT[](nftCount);
-        uint nftsIndex = 0;
         for (uint i = 0; i < nftCount; i++) {
-            if (isListed[i]) {
-                nfts[nftsIndex] = nftListings[i];
-                nftsIndex++;
+            if (isListed[i] == true) {
+                nfts[i] = nftListings[i];
             }
         }
         return nfts;
+    }
+
+    function getListing(uint256 tokenID) public view returns (NFT memory) {
+        if (isListed[tokenID] != true) {
+            revert ItemIsNotListed();
+        }
+        return nftListings[tokenID];
     }
 
     function viewProceeds(address seller) public view returns(uint256) {
