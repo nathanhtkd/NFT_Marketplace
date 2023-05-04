@@ -41,11 +41,6 @@ async function mintAndList() {
     console.log(`NFT Listed with token ID: ${tokenId}\n`);
 
     const mintedBy = await basicNftContract.ownerOf(tokenId);
-    if (owner.address != mintedBy) {
-        console.log("WHAT THE FUCK");
-        console.log(owner.address);
-        console.log(mintedBy);
-    }
     console.log(
         `NFT with ID ${tokenId} minted and listed by ${mintedBy} with identity ${IDENTITIES[mintedBy]}`
     );
@@ -71,13 +66,13 @@ async function main() {
     console.log("\x1b[37m");
     const mintAndListTest = await mintAndList();
 
-    console.log("\x1b[31m", "\nMINTING ANOTHER NFT");
-    console.log("\x1b[37m");
-    const mintAndListTest1 = await mintAndList();
+    // console.log("\x1b[31m", "\nMINTING ANOTHER NFT");
+    // console.log("\x1b[37m");
+    // const mintAndListTest1 = await mintAndList();
 
-    console.log("\x1b[31m", "\nMINTING ANOTHER NFT");
-    console.log("\x1b[37m");
-    const mintAndListTest2 = await mintAndList();
+    // console.log("\x1b[31m", "\nMINTING ANOTHER NFT");
+    // console.log("\x1b[37m");
+    // const mintAndListTest2 = await mintAndList();
 }
 
 main();

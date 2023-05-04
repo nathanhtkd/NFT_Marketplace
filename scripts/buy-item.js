@@ -1,6 +1,6 @@
 const { ethers } = require("hardhat");
 
-const TOKEN_ID = 0;
+const TOKEN_ID = 1;
 
 async function buyItem() {
     const accounts = await ethers.getSigners();
@@ -21,6 +21,7 @@ async function buyItem() {
     const listing = await nftMarketplaceContract.getListing(TOKEN_ID);
 
     const price = listing.price.toString();
+    // const price = ethers.utils.parseEther(".25");
     const tx = await nftMarketplaceContract
         .connect(buyer1)
         .buyNft(basicNftContract.address, TOKEN_ID, {
@@ -38,10 +39,13 @@ async function buyItem() {
 async function main() {
     console.log("\x1b[31m", "\nTESTING MARKETPLACE BUYITEM");
     console.log("\x1b[37m");
-    const buyTest = await buyItem();
-    // .catch((error)=> {
-    // console.error('\x1b[31mERROR', error.errorSignature, 'within the function', error.method);
-    // process.exit(1);});
+    const buyTest = await buyItem()
+        .catch((error)=> {
+            // console.error('\x1b[31mERROR', error.errorSignature, 'within the function', error.method);
+            console.log(error["reason"]);
+            process.exit(1);
+        }
+    );
 }
 
 main();
