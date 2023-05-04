@@ -9,6 +9,7 @@ error TransactionFeeNotIncluded();
 error ItemIsNotListed();
 error NoProceeds();
 error NotTheOwnerOfThisNFT();
+error MarketplaceNotApproved(address nftAddress);
 error ValueNotThePrice(uint256 price);
 
 contract Marketplace is ReentrancyGuard {
@@ -18,12 +19,13 @@ contract Marketplace is ReentrancyGuard {
     mapping(uint256 => bool) public isListed;
     mapping(address => uint256) private sellerProceeds;
     uint256 public constant TRANSACTION_FEE = 100 wei;
-    uint256 public constant LISTING_FEE = 1 wei;
+    uint256 public constant LISTING_FEE = 1 ether;
 
     event ItemListed(address indexed seller, address indexed nftAddress, uint256 tokenID, uint256 price);
     event ItemCanceled(address indexed seller, address indexed nftAddress, uint256 indexed tokenID);
     event ItemBought(address indexed buyer, address indexed nftAddress, uint256 price);
     event ProceedsWithdrawn(uint256 proceeds);
+
 
     struct NFT {
         address nftAddress;
@@ -40,14 +42,16 @@ contract Marketplace is ReentrancyGuard {
         if(price < 0) {
             revert PriceMustBeGreaterThanZero();
         }
-        if(msg.value != TRANSACTION_FEE) {
+        if(msg.value <= TRANSACTION_FEE) {
             revert TransactionFeeNotIncluded();
         }
+        
+        IERC721 nft = IERC721(nftAddress);
+        if (nft.getApproved(tokenID) != address(this)) {
+            revert MarketplaceNotApproved(nftAddress);
+        }
 
-        // transfers ownership from original owner of NFT to marketplace address
-        IERC721(nftAddress).transferFrom(msg.sender, address(this), tokenID);
         owner.transfer(LISTING_FEE);
-
         nftListings[tokenID] = NFT(nftAddress, tokenID, msg.sender, price); 
         isListed[tokenID] = true;
 
@@ -116,4 +120,3 @@ contract Marketplace is ReentrancyGuard {
         return sellerProceeds[seller];
     }
 }
-    
