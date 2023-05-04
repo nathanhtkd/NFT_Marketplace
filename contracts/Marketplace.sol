@@ -15,6 +15,7 @@ error ValueNotThePrice(uint256 price);
 contract Marketplace is ReentrancyGuard {
 
     address payable public owner;  
+    uint256 nftCount;
     mapping(uint256 => NFT) public nftListings;
     mapping(uint256 => bool) public isListed;
     mapping(address => uint256) private sellerProceeds;
@@ -36,6 +37,7 @@ contract Marketplace is ReentrancyGuard {
     
     constructor() {
         owner = payable(msg.sender);
+        nftCount = 0;
     }
 
     function listItem(address nftAddress, uint256 tokenID, uint256 price) public payable nonReentrant {
@@ -54,6 +56,7 @@ contract Marketplace is ReentrancyGuard {
         owner.transfer(LISTING_FEE);
         nftListings[tokenID] = NFT(nftAddress, tokenID, msg.sender, price); 
         isListed[tokenID] = true;
+        nftCount = nftCount + 1;
 
         emit ItemListed(msg.sender, nftAddress, tokenID, price);
     }
@@ -68,6 +71,8 @@ contract Marketplace is ReentrancyGuard {
         IERC721(nftAddress).transferFrom(address(this), msg.sender, tokenID);
         delete(nftListings[tokenID]);
         isListed[tokenID] = false;
+        nftCount = nftCount - 1;
+
         emit ItemCanceled(msg.sender, nftAddress, tokenID);
     }
 
@@ -101,6 +106,7 @@ contract Marketplace is ReentrancyGuard {
         IERC721(nftAddress).transferFrom(address(this), msg.sender, nft.tokenID);
         nft.owner = msg.sender;
         isListed[tokenID] = false;
+        nftCount = nftCount - 1;
 
         emit ItemBought(msg.sender, nftAddress, nft.price);
     }
@@ -114,6 +120,18 @@ contract Marketplace is ReentrancyGuard {
         payable(msg.sender).transfer(proceeds);
 
         emit ProceedsWithdrawn(proceeds);
+    }
+
+     function getListedNfts() public view returns (NFT[] memory) {
+        NFT[] memory nfts = new NFT[](nftCount);
+        uint nftsIndex = 0;
+        for (uint i = 0; i < nftCount; i++) {
+            if (isListed[i]) {
+                nfts[nftsIndex] = nftListings[i];
+                nftsIndex++;
+            }
+        }
+        return nfts;
     }
 
     function viewProceeds(address seller) public view returns(uint256) {
