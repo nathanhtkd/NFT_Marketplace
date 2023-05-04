@@ -11,20 +11,6 @@ error NoProceeds();
 error NotTheOwnerOfThisNFT();
 error ValueNotThePrice(uint256 price);
 
-/*
-    CURRENT FUNCTIONS:
-    1. listItem
-    2. unlistItem
-    3. buyNFT
-    4. withdrawProceeds
-    5. updateListing
-
-    NEED TO IMPLEMENT?
-    1. getListedNFT
-    2. getListing
-    3. auction??
-
-*/
 contract Marketplace is ReentrancyGuard {
 
     address payable public owner;  
@@ -37,6 +23,7 @@ contract Marketplace is ReentrancyGuard {
     event ItemListed(address indexed seller, address indexed nftAddress, uint256 tokenID, uint256 price);
     event ItemCanceled(address indexed seller, address indexed nftAddress, uint256 indexed tokenID);
     event ItemBought(address indexed buyer, address indexed nftAddress, uint256 price);
+    event ProceedsWithdrawn(uint256 proceeds);
 
     struct NFT {
         address nftAddress;
@@ -98,7 +85,7 @@ contract Marketplace is ReentrancyGuard {
 
     function buyNft(address nftAddress, uint256 tokenID) public payable nonReentrant {
         if(isListed[tokenID] != true) {
-                revert ItemIsNotListed();
+            revert ItemIsNotListed();
         }
 
         NFT storage nft = nftListings[tokenID];
@@ -121,6 +108,8 @@ contract Marketplace is ReentrancyGuard {
         }
         sellerProceeds[msg.sender] = 0;
         payable(msg.sender).transfer(proceeds);
+
+        emit ProceedsWithdrawn(proceeds);
     }
 
     function viewProceeds(address seller) public view returns(uint256) {
