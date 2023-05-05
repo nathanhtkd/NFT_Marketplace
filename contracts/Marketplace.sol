@@ -19,6 +19,7 @@ contract Marketplace is ReentrancyGuard {
     mapping(uint256 => NFT) public nftListings;
     mapping(uint256 => bool) public isListed;
     mapping(address => uint256) private sellerProceeds;
+
     uint256 public constant TRANSACTION_FEE = 100 wei;
     uint256 public constant LISTING_FEE = 1 ether;
 
@@ -68,7 +69,6 @@ contract Marketplace is ReentrancyGuard {
         if(nftListings[tokenID].owner != msg.sender) {
             revert NotTheOwnerOfThisNFT();
         }
-        // IERC721(nftAddress).transferFrom(address(this), msg.sender, tokenID);
         delete(nftListings[tokenID]);
         isListed[tokenID] = false;
 

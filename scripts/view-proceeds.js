@@ -10,7 +10,7 @@ async function getProceeds() {
     const proceeds = await nftMarketplaceContract.viewProceeds(owner.address);
 
     const proceedsWei = ethers.utils.formatEther(proceeds.toString());
-    console.log(`Seller ${owner.address} has ${proceedsWei} eth to pull!`);
+    console.log(`Seller ${owner.address} has ${proceedsWei} eth to pull!\n`);
 }
 
 async function main() {
