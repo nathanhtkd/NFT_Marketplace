@@ -2,12 +2,8 @@
 /.deps/
 /node_modules/
 /cache/
-package.json
 package-lock.json
-hardhat.config.js
 /test/
 /utils/
-/deploy/
 /deployments/
-helper-hardhat-config.js
 yarn.lock
