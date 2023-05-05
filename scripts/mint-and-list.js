@@ -55,14 +55,6 @@ async function main() {
     console.log("\x1b[31m", "\nTESTING MARKETPLACE LISTNFT");
     console.log("\x1b[37m");
     const mintAndListTest = await mintAndList();
-
-    // console.log("\x1b[31m", "\nMINTING ANOTHER NFT");
-    // console.log("\x1b[37m");
-    // const mintAndListTest1 = await mintAndList();
-
-    // console.log("\x1b[31m", "\nMINTING ANOTHER NFT");
-    // console.log("\x1b[37m");
-    // const mintAndListTest2 = await mintAndList();
 }
 
 main();
